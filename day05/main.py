@@ -14,22 +14,20 @@ class Map:
         else:
             return None
 
-    def __str__(self) -> str:
-        return f"{self.start} | {self.end} | {self.range}"
-
 def parse_data(file_name):
     with open(file_name, "r") as file:
-        maps = {}
-        seeds_part_2 = []
+
 
         seeds_line = file.readline().split(":")[1].split()
         seeds_line = [int(x) for x in seeds_line]
         seeds_part_1 = seeds_line
+        seeds_part_2 = []
         for i in range(int(len(seeds_line)/2)):
             seeds_part_2.append([seeds_line[2*i],seeds_line[2*i] + seeds_line[2*i+1]-1])
-        
-        map_num = 0
+                
+        maps = {}
         map_array = []
+        map_num = 0
         file.readline()
         for line in file:
             if line == "\n":
@@ -38,47 +36,23 @@ def parse_data(file_name):
                 map_num += 1
             elif line.split()[-1] != "map:":
                 map_array.append(Map(line))
-        maps[map_num] = map_array
-
-        for i,map_array in maps.items():
-            print(f"==={i}===")
-            for map in map_array:
-                print(map)
+        maps[map_num] = map_array #last one
         print("===parsing done===")
-
         return seeds_part_1, seeds_part_2, maps
 
 def solve_part_1(seeds, maps):
-
-        # part 1
-        paths = []
         results = []
         for seed in seeds:
-            path = []
             print(f"Seed === {seed} ===")
-            for map_num, map_array in maps.items():
-                #print(f"maps === {map_num} ===")
+            for map_array in maps.values():
                 for map in map_array:
                     if map.calc(seed) is not None:
-                        old_seed = seed
-                        path.append(seed)
                         seed = map.calc(seed)
-                        #print(f"maps N {map_num} from {old_seed} to {seed}")
                         break
-                    #else:
-                        #print("map not valid")
-                    if map == map_array[-1]:
-                        path.append(seed)
-            
-            path.append(seed)
-            paths.append(path)
             results.append(seed)
-            #print(seed)
-
         print(results)
         print("=== part one result ===")
         print(min(results))
-
 
 def solve_part_2(current_layer_seed_array, maps):
     for layer_number in range(len(maps)):
