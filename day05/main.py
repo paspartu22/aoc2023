@@ -16,15 +16,14 @@ class Map:
 
 def parse_data(file_name):
     with open(file_name, "r") as file:
-
-
+        #seeds
         seeds_line = file.readline().split(":")[1].split()
         seeds_line = [int(x) for x in seeds_line]
         seeds_part_1 = seeds_line
         seeds_part_2 = []
         for i in range(int(len(seeds_line)/2)):
             seeds_part_2.append([seeds_line[2*i],seeds_line[2*i] + seeds_line[2*i+1]-1])
-                
+        #maps
         maps = {}
         map_array = []
         map_num = 0
