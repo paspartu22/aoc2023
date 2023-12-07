@@ -1,10 +1,10 @@
-hand_names = {1: "high",
-              2: "one p",
-              3: "two p",
-              4: "three",
+hand_names = {1: "high card",
+              2: "one pair",
+              3: "two pairs",
+              4: "three of a kind",
               5: "full house",
-              6: "four",
-              7: "five"}
+              6: "four of a kind",
+              7: "five of a kind"}
 class Hand:
     def __init__(self, input) -> None:
         input = input.split()
@@ -20,7 +20,7 @@ class Hand:
         self.hand_strength = 0
         
     def __str__(self):
-        return f"{hand_names[self.hand_strength]} | {self.hand_str} | {self.hand_int:x} | {self.bid}"
+        return f"{hand_names[self.hand_strength]} \t| {self.hand_str} \t| {self.hand_int:x} \t| {self.bid}"
 
     def __lt__(self, other):
         return self.hand_int < other.hand_int
@@ -66,7 +66,7 @@ class Hand:
             self.hand_strength = 1
         return self.hand_strength
     
-def parse(file):
+def parse_input(file):
     with open(file, "r") as file:
         hands = []
         for line in file:
@@ -74,21 +74,20 @@ def parse(file):
         return hands
 
 def main():
-    hands = parse("data.txt")
-    hands_in_groups = {7:[], 6:[], 5:[], 4:[], 3:[], 2:[], 1:[]}
+    hands = parse_input("data.txt")
+    hands_in_groups = {1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[]}
     for hand in hands:
         strength = hand.parse_hand()
         hands_in_groups[strength].append(hand)
 
     result = 0
     rank = 0
-    for hand_strength in range(1, 8):
-        print(hand_strength)
-        hands_in_groups[hand_strength].sort()
-        for hand in hands_in_groups[hand_strength]:
+    for hand_group in hands_in_groups.values():
+        hand_group.sort()
+        for hand in hand_group:
             rank += 1
             result += rank*hand.bid
-            print(f"{rank} | {hand}")    
+            print(f"{rank} \t| {hand}")    
     print("=== result ===")
     print(result)
 
