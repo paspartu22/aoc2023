@@ -87,14 +87,11 @@ def main():
     rank = 0
     for item in hands_in_groups.values():
         print(len(item))
-    #input()
     for hand_strength in range(1, 8):
         print(hand_strength)
         for hand_value in range(0x11111, 0xf0000):
             for hand in hands_in_groups[hand_strength]:
                 if hand_value == hand.hand_int:
-                    if rank % 10 == 0:
-                        print(rank)
                     rank += 1
                     result += rank*hand.bid
                     print(f"{rank} | {hand}")    
