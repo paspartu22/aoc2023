@@ -13,6 +13,7 @@ class Hand:
         self.hand_str = self.hand_str.replace("A", "e")
         self.hand_str = self.hand_str.replace("K", "d")
         self.hand_str = self.hand_str.replace("Q", "c")
+        #self.hand_str = self.hand_str.replace("J", "b") part 1
         self.hand_str = self.hand_str.replace("J", "1")
         self.hand_str = self.hand_str.replace("T", "a")        
         self.hand_int = int(self.hand_str, 16)
@@ -25,6 +26,7 @@ class Hand:
         return self.hand_int < other.hand_int
     
     def parse_hand(self):
+        #map amount of cards
         print(self.hand_str)
         hand_values = {"1" : 0}
         for card in self.hand_str:
@@ -32,6 +34,7 @@ class Hand:
                 hand_values[card] += 1
             else:
                 hand_values[card] = 1
+        #process jokers (remove for part 1)
         max_value = [0, 0]
         for card in hand_values.items():
             if card[0] != "1" and card[1] > int(max_value[1]):
@@ -41,8 +44,7 @@ class Hand:
             hand_values["1"] = 0
         else:
             hand_values["1"] = 5
-            
-                
+        #process strength of hand
         if 5 in hand_values.values():
             self.hand_strength = 7
         elif 4 in hand_values.values():
@@ -60,23 +62,15 @@ class Hand:
                 self.hand_strength = 3
             else:
                 self.hand_strength = 2
-        elif 1 in hand_values.values():
-            self.hand_strength = 1
         else:
-            print("Error")
-            input()
-        
-        #self.hand_int = int(self.hand_str, 16)
+            self.hand_strength = 1
         return self.hand_strength
-    
-    
     
 def parse(file):
     with open(file, "r") as file:
         hands = []
         for line in file:
             hands.append(Hand(line))
-        
         return hands
 
 def main():
