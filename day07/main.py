@@ -20,6 +20,9 @@ class Hand:
         
     def __str__(self):
         return f"{hand_names[self.hand_strength]} | {self.hand_str} | {self.hand_int:x} | {self.bid}"
+
+    def __lt__(self, other):
+        return self.hand_int < other.hand_int
     
     def parse_hand(self):
         print(self.hand_str)
@@ -82,21 +85,18 @@ def main():
     for hand in hands:
         strength = hand.parse_hand()
         hands_in_groups[strength].append(hand)
-        #print(hand)
+
     result = 0
     rank = 0
-    for item in hands_in_groups.values():
-        print(len(item))
     for hand_strength in range(1, 8):
         print(hand_strength)
-        for hand_value in range(0x11111, 0xf0000):
-            for hand in hands_in_groups[hand_strength]:
-                if hand_value == hand.hand_int:
-                    rank += 1
-                    result += rank*hand.bid
-                    print(f"{rank} | {hand}")    
+        hands_in_groups[hand_strength].sort()
+        for hand in hands_in_groups[hand_strength]:
+            rank += 1
+            result += rank*hand.bid
+            print(f"{rank} | {hand}")    
     print("=== result ===")
     print(result)
-    
+
 if __name__ == "__main__":
     main()
