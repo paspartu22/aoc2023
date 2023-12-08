@@ -13,7 +13,6 @@ def parse_input(file):
             nodes[line[:3]] = [line[7:10],line[-5:-2]]
             if line[2] == 'A':
                 start_names.append(line[:3])
-
         return task, nodes, start_names
     
 def main():
@@ -29,14 +28,11 @@ def main():
             i += 1
             if current_node_name[-1] == 'Z':
                 if not end:
-                    results.append(i)
+                    results.append(np.int64(i))
                     break
 
     print(results)
-    result = np.int64(1)
-    for item in results:
-        result = np.lcm(result, item)
-    print(result)
+    print(np.lcm.reduce(results))
     
 if __name__ == "__main__":
     main()
