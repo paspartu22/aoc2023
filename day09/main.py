@@ -1,17 +1,18 @@
 def find_next_number(valve):
-    numbers = [valve]
+    old_array = valve
     new_array = []
+    new_first_number = old_array[0]
+    new_last_number = old_array[-1]
+    line_num = 1
+    
     while len(set(new_array)) != 1:   
         new_array = [] 
-        for i in range(len(numbers[-1])-1):
-            new_array.append(numbers[-1][i+1] - numbers[-1][i])
-        numbers.append(new_array)
-        
-    new_last_number = 0
-    new_first_number = 0
-    for i,line in enumerate(numbers):
-        new_last_number += line[-1]
-        new_first_number += line[0] if i%2 == 0 else -line[0]
+        for i in range(len(old_array)-1):
+            new_array.append(old_array[i+1] - old_array[i])
+        new_last_number += new_array[-1]
+        new_first_number += new_array[0] if line_num%2 == 0 else -new_array[0]
+        old_array = new_array
+        line_num += 1
         
     return new_first_number, new_last_number
         
@@ -20,20 +21,15 @@ def parse_input(file):
     with open(file, "r") as file:
         for line in file:
             valve = line.strip().split()
-            valve = [int(num) for num in valve]
-            valves.append(valve)
-    return (valves)
+            valves.append([int(num) for num in valve])
+    return valves
 
 def main():
     valves = parse_input("data.txt")
-    result_part_1 = 0
-    result_part_2 = 0 
+    results = []
     for valve in valves:
-        result_1, result_2 = find_next_number(valve)
-        print(f"{result_1} {result_2}")
-        result_part_1 += result_1
-        result_part_2 += result_2
-    print(result_part_1)
-    print(result_part_2)
+        results.append(find_next_number(valve))
+    print(sum([result[0] for result in results]))
+    print(sum([result[1] for result in results]))
 if __name__ == "__main__":
     main()
