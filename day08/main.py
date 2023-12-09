@@ -8,7 +8,7 @@ def parse_input(file):
         start_names = []
         nodes = {}
         for line in file:
-            nodes[line[:3]] = [line[7:10],line[-5:-2]]
+            nodes[line[:3]] = [line[7:10], line[-5:-2]]
             if line[2] == 'A':
                 start_names.append(line[:3])
         return task, nodes, start_names
