@@ -2,19 +2,15 @@ class Pipe:
     def __init__(self, x, y, letter = "") -> None:
         self.x = x
         self.y = y 
-        self.double_x = 2*x
-        self.double_y = 2*y
         self.letter = letter
-        if letter != "":
-            self.directions = pipes_letters[letter]
-        self.is_loop = False
+        self.directions = pipes_letters[letter]
     
-    def return_next_pipe(self, direction):
+    def return_adj_pipe(self, direction):
         x = self.x + directions[self.directions[direction]][0]
         y = self.y + directions[self.directions[direction]][1]
-        return pipes[x, y]
+        return pipes[x, y] #
     
-    def return_next_pipe_coordinates(self, direction): #part 2 double coordinates
+    def return_halfpipe(self, direction): #part 2 double coordinates
         x = 2*self.x + directions[self.directions[direction]][0]
         y = 2*self.y + directions[self.directions[direction]][1]
         return [x,y]        
@@ -23,7 +19,7 @@ class Pipe:
         return f"{self.x}, {self.y}, {self.directions}"
 
 directions = {0:[1,0], 1:[0,-1], 2:[-1,0], 3:[0,1]}
-pipes_letters = {"-":[0,2], "|":[1,3], "L":[0,1], "J":[1,2],"7":[2,3],"F":[0,3], "S":[0,2]}
+pipes_letters = {"-":[0,2], "|":[1,3], "L":[0,1], "J":[1,2],"7":[2,3],"F":[0,3], "S":[3,2]}
 pipes = {}
 
 def parse_input(file):
@@ -45,10 +41,10 @@ def double_map (loop):
     new_loop_tiles = []
     for pipe in loop:
         new_loop_tiles.append([pipe.x*2, pipe.y*2])
-        if pipe.return_next_pipe_coordinates(0) not in new_loop_tiles:
-            new_loop_tiles.append(pipe.return_next_pipe_coordinates(0))            
-        if  pipe.return_next_pipe_coordinates(1) not in new_loop_tiles:
-            new_loop_tiles.append(pipe.return_next_pipe_coordinates(1))     
+        if pipe.return_halfpipe(0) not in new_loop_tiles:
+            new_loop_tiles.append(pipe.return_halfpipe(0))            
+        if  pipe.return_halfpipe(1) not in new_loop_tiles:
+            new_loop_tiles.append(pipe.return_halfpipe(1))     
     return new_loop_tiles       
 
 def bfs(node, loop, height, width): #function for BFS
@@ -73,8 +69,8 @@ def bfs(node, loop, height, width): #function for BFS
     return real_tiles, visited
 
 def main():
-    start_pipe, height, width = parse_input("data.txt")
-
+    start_pipe, height, width = parse_input("test5.txt")
+    print("part 1")
     current_pipe = start_pipe
     last_dir = 0
     loop_tiles = []
@@ -82,18 +78,17 @@ def main():
         loop_tiles.append(current_pipe)
         if current_pipe.directions[0] == (last_dir + 2) % 4: 
             last_dir = current_pipe.directions[1]
-            current_pipe = current_pipe.return_next_pipe(1)
+            current_pipe = current_pipe.return_adj_pipe(1)
         else:
             last_dir = current_pipe.directions[0]
-            current_pipe = current_pipe.return_next_pipe(0)
+            current_pipe = current_pipe.return_adj_pipe(0)
 
-    print("part 1")
     print(len(loop_tiles)//2)
-
-    input((2*width) + (2*height))
+    
+    print("part 2")
     new_loop = double_map (loop_tiles)
     outside, visited = bfs([0,0], new_loop, height, width)
-    
+    #Just draw BIG map
     result = 0
     for y in range(-1,2*height+1):
         line = ""
@@ -104,17 +99,19 @@ def main():
                 else:
                     line += "*"
             elif [x,y] in visited:
-                line += "-"
-            else:
+                line += ","
+            elif x%2 == 0 and y%2 == 0:
                 line += "+"
-                if x%2 == 0 and y%2 == 0:
-                    result += 1
+                result += 1
+            else:
+                line += "."
         print(line)
 
     print(result)
     print (len(outside))
     print (f"{width} {height}")
     print ((width+1)*(height+1) - len(outside) - len(loop_tiles))
+
 
 
 if __name__ == "__main__":
