@@ -3,13 +3,13 @@ def parse_input(file):
         galaxies = []
         empty_rows = []
         empty_cols = None
+        
         for y,line in enumerate(file):
-            
             if empty_cols is None:
                 empty_cols = [i for i in range(len(line))]
-            
             if "#" not in line:
                 empty_rows.append(y)
+                
             for x,letter in enumerate(line):
                 if letter == "#":
                     galaxies.append([x,y])
