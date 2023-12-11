@@ -3,7 +3,7 @@ empty_rows = []
 empty_cols = []
 width = 0
 height = 0
-expand_multiplyer = 1000000 
+expand_multiplier = 1000000 
 
 def parse_input(file):
     with open(file, "r") as file:
@@ -34,12 +34,12 @@ def expand ():
         for row in empty_rows:
             if row < galaxies[i][1]:
                 j += 1
-        galaxies[i][1] += j*(expand_multiplyer-1)
+        galaxies[i][1] += j*(expand_multiplier-1)
         j = 0
         for col in empty_cols:
             if col < galaxies[i][0]:
                 j += 1
-        galaxies[i][0] += j*(expand_multiplyer-1)
+        galaxies[i][0] += j*(expand_multiplier-1)
         
 def find_closest():
     sum = 0
@@ -56,9 +56,9 @@ def main():
     print(empty_rows)
     print(empty_cols)
     
-    '''for y in range(height+len(empty_rows)*expand_multiplyer):
+    '''for y in range(height+len(empty_rows)*expand_multiplier):
         line = ""
-        for x in range(width+len(empty_cols)*expand_multiplyer):
+        for x in range(width+len(empty_cols)*expand_multiplier):
             if [x,y] in galaxies:
                 line += "#"
             else:
