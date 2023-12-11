@@ -1,73 +1,44 @@
-galaxies = []
-empty_rows = []
-empty_cols = []
-width = 0
-height = 0
-expand_multiplier = 1000000 
-
 def parse_input(file):
     with open(file, "r") as file:
+        galaxies = []
+        empty_rows = []
+        empty_cols = None
         for y,line in enumerate(file):
-            global width 
-            width = len(line.strip())
-            global height
-            height += 1
+            
+            if empty_cols is None:
+                empty_cols = [i for i in range(len(line))]
+            
             if "#" not in line:
                 empty_rows.append(y)
             for x,letter in enumerate(line):
                 if letter == "#":
                     galaxies.append([x,y])
-
-def find_empty_cols():
-    for x in range(width):
-        is_empty = True
-        for galaxy in galaxies:
-            if x == galaxy[0]:
-                is_empty = False
-                break
-        if is_empty:
-            empty_cols.append(x)
+                    if x in empty_cols:
+                        empty_cols.pop(empty_cols.index(x))
+        return galaxies, empty_rows, empty_cols
             
-def expand ():
+def expand (galaxies, empty_cols, empty_rows, expand_multiplier):
     for i in range(len(galaxies)):
-        j = 0
-        for row in empty_rows:
-            if row < galaxies[i][1]:
-                j += 1
-        galaxies[i][1] += j*(expand_multiplier-1)
-        j = 0
-        for col in empty_cols:
-            if col < galaxies[i][0]:
-                j += 1
+        j = len([1 for col in empty_cols if col < galaxies[i][0]]) 
         galaxies[i][0] += j*(expand_multiplier-1)
         
-def find_closest():
+        j = len([1 for row in empty_rows if row < galaxies[i][1]])
+        galaxies[i][1] += j*(expand_multiplier-1)
+    return galaxies
+        
+def sum_all(galaxies):
     sum = 0
-    for start in galaxies:
-        for end in galaxies:
+    for i,start in enumerate(galaxies):
+        for end in galaxies[i:]:
             sum += abs(end[0]-start[0]) + abs(end[1]-start[1])
     return sum
 
 def main():
-    parse_input("data.txt")
-    find_empty_cols()
-    expand()
-    print(galaxies)
-    print(empty_rows)
-    print(empty_cols)
+    expand_multiplier = 2
+    expand_multiplier = 1_000_000 
+    galaxies, empty_rows, empty_cols  = parse_input("data.txt")
+    galaxies = expand(galaxies, empty_cols, empty_rows, expand_multiplier)
+    print(sum_all(galaxies))
     
-    '''for y in range(height+len(empty_rows)*expand_multiplier):
-        line = ""
-        for x in range(width+len(empty_cols)*expand_multiplier):
-            if [x,y] in galaxies:
-                line += "#"
-            else:
-                line += "."
-        print(line)
-    '''
-    result = find_closest()
-    print(result//2)
-    
-
 if __name__ == "__main__":
     main()
