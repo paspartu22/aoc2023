@@ -1,16 +1,13 @@
 replace_map = {'0':".", '1':"#"}
-
+max = 0
 def parse_input(file):
     with open(file, "r") as file:
         input_array = []
         for line in file:
             springs, numbers = line.strip().split()
             input_array.append([springs, [int(num) for num in numbers.split(",")]])
-
         return input_array
     
-
-
 def dfs(line, nums, char_counter, num_counter, running_spring_counter):
     #print(f"{int(char_counter/len(line)*100)}")
     num_of_ways = 0
@@ -25,44 +22,59 @@ def dfs(line, nums, char_counter, num_counter, running_spring_counter):
             running_spring_counter = 0
             num_counter += 1
     if char_counter == len(line)-1:
-        if num_counter == len(nums):
-            #print (f"{line} {nums}")
-            #input()
-            return 1
+        return num_counter == len(nums)
+
+    if line[char_counter+1] == "?":
+        temp_line = line        
+        if num_counter < len(nums) and char_counter+nums[num_counter]-running_spring_counter+1 < len(line):
+            slice = line[char_counter+1:char_counter+nums[num_counter]-running_spring_counter+1]
         else:
             return 0
-        
-    if line[char_counter+1] == "?":
-        temp_line = line
-        num_of_ways += dfs(line.replace('?', '#', 1), nums, char_counter+1, num_counter, running_spring_counter)
-        num_of_ways += dfs(temp_line.replace('?', '.', 1), nums, char_counter+1, num_counter, running_spring_counter)
+        if running_spring_counter == 0 or running_spring_counter == nums[num_counter]:
+            num_of_ways += dfs(temp_line.replace('?', '.', 1), nums, char_counter+1, num_counter, running_spring_counter)
+        if "." not in slice:
+            line = line.replace('?', '#', slice.count('?'))
+            num_of_ways += dfs(line, nums, char_counter+1, num_counter, running_spring_counter)
     else:
         num_of_ways += dfs(line, nums, char_counter+1, num_counter, running_spring_counter)
+    
+    global max
+    if num_of_ways > max:
+        max = num_of_ways
+        print(max, end='\r')
+
     return num_of_ways 
 
 def main():
-    input_array = parse_input("test.txt")
-    sum_result = 0
-    for input in input_array:
-        line = input[0]
-        nums = input[1].copy()
-        for i in range(4):
-            input[0] += '?'+line
-            for num in nums:
-                input[1].append(num)
-        print(input)   
-        result = 0
-        input[0] += "."
-        if input[0][0] == "?":
-            temp_line = input[0]
-            result += dfs(input[0].replace('?', '#', 1), input[1], 0, 0, 0)
-            result += dfs(temp_line.replace('?', '.', 1), input[1], 0, 0, 0)
-        else:
-            result += dfs(input[0], input[1], 0, 0, 0)
-        print(result)
-        sum_result += result
-    print("result")
-    print(sum_result)
+    with open("output.txt", "+a") as output:
+        #for j in range(5):
+        input_array = parse_input("test.txt")
+        sum_result = []
+        line_num = 9-1
+        for input in input_array:
+            global max
+            max = 0
+            line = input[0]
+            nums = input[1].copy()
+            for i in range(4):
+                input[0] += '?'+line
+                for num in nums:
+                    input[1].append(num)
+            print(input)   
+            result = 0
+            input[0] += "."
+            if input[0][0] == "?":
+                temp_line = input[0]
+                
+                result += dfs(input[0].replace('?', '#', 1), input[1], 0, 0, 0)
+                result += dfs(temp_line.replace('?', '.', 1), input[1], 0, 0, 0)
+            else:
+                result += dfs(input[0], input[1], 0, 0, 0)
+            print(result)
+            sum_result.append(result)
+        print("result")
+        output.write(str(sum_result)[1:-1]+'\n')
+        print(sum(sum_result))
 
 if __name__ == "__main__":
     main()
