@@ -1,126 +1,58 @@
 import timeit
 
-replace_map = {'0':".", '1':"#"}
 max = 0
-def parse_input(file):
+def parse_input(file, folding = 1):
     with open(file, "r") as file:
         input_array = []
         for line in file:
             springs, numbers = line.strip().split()
-            input_array.append([springs, [int(num) for num in numbers.split(",")]])
+            input_array.append([((springs+'?')*folding)[:-1], [int(num) for num in ((numbers+',')*folding)[:-1].split(",")]])
         return input_array
     
-def dfs(line, nums, char_counter, num_counter, running_spring_counter):
-    #print(f"{int(char_counter/len(line)*100)}")
-    num_of_ways = 0
-    if line[char_counter] == "#":
-        running_spring_counter += 1
-        if num_counter == len(nums) or running_spring_counter > nums[num_counter]:
-            return 0
-    elif running_spring_counter != 0:
-        if num_counter == len(nums) or running_spring_counter != nums[num_counter]:
-            return 0
+DP = {}
+def dp(line, nums, char, num, current):
+    key = (char, num, current)
+    if key in DP:
+        return DP[key]
+    if char == len(line):
+        if num == len(nums) and current == 0:
+            return 1
+        elif num == len(nums)-1 and current == nums[-1]:
+            return 1
         else:
-            running_spring_counter = 0
-            num_counter += 1
-    if char_counter == len(line)-1:
-        return num_counter == len(nums)
-
-    if line[char_counter+1] == "?":
-        temp0 =  line.replace('?', '.', 1)
-        temp1 = line.replace('?', '#', 1)
-        if line[char_counter] == "#":
-            if running_spring_counter == nums[num_counter]:
-                num_of_ways += dfs(temp0, nums, char_counter+1, num_counter, running_spring_counter)
-            elif running_spring_counter < nums[num_counter]:
-        
-                num_of_ways += dfs(temp1, nums, char_counter+1, num_counter, running_spring_counter)
-        else:
-                num_of_ways += dfs(temp0, nums, char_counter+1, num_counter, running_spring_counter)
-                num_of_ways += dfs(temp1, nums, char_counter+1, num_counter, running_spring_counter)
-
-    else:
-        num_of_ways += dfs(line, nums, char_counter+1, num_counter, running_spring_counter)
-    
-    global max
-    if num_of_ways > max:
-        max = num_of_ways
-        print(max, end='\r')
-
-    return num_of_ways 
+            return 0
+    result = 0
+    for new_char in ['.', '#']:
+        if line[char] == new_char or line[char] == '?':
+            if new_char == '.' and current == 0:
+                result += dp(line, nums, char+1, num, 0)
+            elif new_char == '.' and num < len(nums) and current == nums[num]:
+                result += dp(line, nums, char+1, num+1, 0)
+            elif new_char == '#':
+                result += dp(line, nums, char+1, num, current+1)
+    DP[key] = result
+    return result
 
 def main():
     start_time = timeit.default_timer()
-    with open("output.txt", "+a") as output:
-        #for j in range(5):
-        input_array = parse_input("test.txt")
-        sum_result = []
-        line_num = 9-1
-        for input in input_array:
-            global max
-            max = 0
-            line = input[0]
-            nums = input[1].copy()
-            for i in range(4):
-                input[0] += '?'+line
-                for num in nums:
-                    input[1].append(num)
-            print(input)   
-            result = 0
-            input[0] += "."
-            if input[0][0] == "?":
-                temp_line = input[0]
-                
-                result += dfs(input[0].replace('?', '#', 1), input[1], 0, 0, 0)
-                result += dfs(temp_line.replace('?', '.', 1), input[1], 0, 0, 0)
-            else:
-                result += dfs(input[0], input[1], 0, 0, 0)
-            print(result)
-            sum_result.append(result)
-        print("result")
-        output.write(str(sum_result)[1:-1]+'\n')
-        print(sum(sum_result))
-
+    input_array = parse_input("data.txt", 5)
+    sum_result = []
+    for i,line in enumerate(input_array):
+        #print(f'{i} {line}')   
+        #print(line[0])
+        DP.clear()
+        result = dp(line[0], line[1], 0, 0, 0)
+        #print(result)
+        #print(f"Time {timeit.default_timer()-start_time}")
+        sum_result.append(result)
+        
+    print("result")
+    print(sum(sum_result))
+    with open('output.txt', '+a') as file:
+        file.write(str(sum_result)[1:-1])
+        file.write('\n')
     stop_time = timeit.default_timer()
     print(f"Time {stop_time-start_time}")
+
 if __name__ == "__main__":
     main()
-
-    ''' part 1
-    def check_variant(line, nums):
-    char_counter = 0
-    num_counter = 0
-    line += '.'
-    for char in line:
-        if char == "#":
-            char_counter += 1
-
-        elif char_counter != 0:
-            if num_counter == len(nums) or char_counter != nums[num_counter]:
-                return False
-            else:
-                char_counter = 0
-                num_counter += 1
-    return num_counter == len(nums)
-
-    for line in input_array:
-        print(line)
-        line_result = 0
-        for i in range(2**line[0].count('?')):
-            temp_line = line[0]
-            num = str(bin(i)[2:]).zfill(temp_line.count('?'))
-            for digit in num:
-                temp_line = temp_line.replace('?',replace_map[digit], 1)
-
-            if check_variant(temp_line, line[1]):
-                line_result += 1
-                print(f"+ {temp_line} {line[1]}")
-            else:
-                pass
-                #print(f"- {temp_line} {line[1]}")
-        print(line_result)
-        print()
-        sum_result += line_result
-    
-
-    '''
