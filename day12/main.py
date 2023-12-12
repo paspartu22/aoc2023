@@ -1,3 +1,5 @@
+import timeit
+
 replace_map = {'0':".", '1':"#"}
 max = 0
 def parse_input(file):
@@ -25,16 +27,18 @@ def dfs(line, nums, char_counter, num_counter, running_spring_counter):
         return num_counter == len(nums)
 
     if line[char_counter+1] == "?":
-        temp_line = line        
-        if num_counter < len(nums) and char_counter+nums[num_counter]-running_spring_counter+1 < len(line):
-            slice = line[char_counter+1:char_counter+nums[num_counter]-running_spring_counter+1]
+        temp0 =  line.replace('?', '.', 1)
+        temp1 = line.replace('?', '#', 1)
+        if line[char_counter] == "#":
+            if running_spring_counter == nums[num_counter]:
+                num_of_ways += dfs(temp0, nums, char_counter+1, num_counter, running_spring_counter)
+            elif running_spring_counter < nums[num_counter]:
+        
+                num_of_ways += dfs(temp1, nums, char_counter+1, num_counter, running_spring_counter)
         else:
-            return 0
-        if running_spring_counter == 0 or running_spring_counter == nums[num_counter]:
-            num_of_ways += dfs(temp_line.replace('?', '.', 1), nums, char_counter+1, num_counter, running_spring_counter)
-        if "." not in slice:
-            line = line.replace('?', '#', slice.count('?'))
-            num_of_ways += dfs(line, nums, char_counter+1, num_counter, running_spring_counter)
+                num_of_ways += dfs(temp0, nums, char_counter+1, num_counter, running_spring_counter)
+                num_of_ways += dfs(temp1, nums, char_counter+1, num_counter, running_spring_counter)
+
     else:
         num_of_ways += dfs(line, nums, char_counter+1, num_counter, running_spring_counter)
     
@@ -46,6 +50,7 @@ def dfs(line, nums, char_counter, num_counter, running_spring_counter):
     return num_of_ways 
 
 def main():
+    start_time = timeit.default_timer()
     with open("output.txt", "+a") as output:
         #for j in range(5):
         input_array = parse_input("test.txt")
@@ -76,6 +81,8 @@ def main():
         output.write(str(sum_result)[1:-1]+'\n')
         print(sum(sum_result))
 
+    stop_time = timeit.default_timer()
+    print(f"Time {stop_time-start_time}")
 if __name__ == "__main__":
     main()
 
