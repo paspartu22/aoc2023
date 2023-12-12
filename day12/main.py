@@ -1,6 +1,5 @@
 import timeit
 
-max = 0
 def parse_input(file, folding = 1):
     with open(file, "r") as file:
         input_array = []
@@ -21,6 +20,7 @@ def dp(line, nums, char, num, current):
             return 1
         else:
             return 0
+        
     result = 0
     for new_char in ['.', '#']:
         if line[char] == new_char or line[char] == '?':
@@ -36,21 +36,17 @@ def dp(line, nums, char, num, current):
 def main():
     start_time = timeit.default_timer()
     input_array = parse_input("data.txt", 5)
-    sum_result = []
+    sum_result = 0
     for i,line in enumerate(input_array):
-        #print(f'{i} {line}')   
-        #print(line[0])
         DP.clear()
         result = dp(line[0], line[1], 0, 0, 0)
+        #print(f'{i} {line}')  
         #print(result)
         #print(f"Time {timeit.default_timer()-start_time}")
-        sum_result.append(result)
+        sum_result += result
         
     print("result")
-    print(sum(sum_result))
-    with open('output.txt', '+a') as file:
-        file.write(str(sum_result)[1:-1])
-        file.write('\n')
+    print(sum_result)
     stop_time = timeit.default_timer()
     print(f"Time {stop_time-start_time}")
 
