@@ -9,54 +9,30 @@ def parse_input(file):
 def check_vertical(mirror):
     result = [x for x in range(1, len(mirror[0]))]
     for line in mirror:
-        #print(f"line {line}")
         temp_result = result.copy()
         for placement in temp_result:
-            #print(f"place {placement}")
-            left = placement
-            right = len(line)-placement
-            compare_size = min(left, right)
+            compare_size = min(placement, len(line)-placement)
             left_side = line[placement-compare_size : placement]
             right_side_m = line[placement+compare_size - 1 : placement - 1 : -1]
             if left_side != right_side_m:
-                #print(f"remove {placement}")
                 result.pop(result.index(placement))
-            #print(f"size {compare_size}")
-            #print(f"left side  {left_side}")
-            #print(f"right side {right_side_m}")
-            #print()
-
-    return result if result else [0]
-
-def log(message = ""):
-    print(message)
+    return result if result else [0] #return list of all possible mirrors else [0]
 
 def check_horisontal(mirror):
     result = []
-    #log(mirror)
     for placement in range(1,len(mirror)):
-        left = placement
-        right = len(mirror) - placement
-        compare_size = min(left, right)
+        compare_size = min(placement, len(mirror) - placement)
         left_side = mirror[placement - compare_size : placement]
         right_side_m = mirror[placement + compare_size - 1 : placement - 1 : -1]
-        #log(f"size {compare_size}")
-        #log(f"left side  {left_side}")
-        #log(f"right side {right_side_m}")
-        #log()
         if left_side == right_side_m:
             result.append(placement)
-    
-    return result if result else [0]
+    return result if result else [0] #return list of all possible mirrors else [0]
 
 def premutate_mirror(mirror, original_h, original_v):
     for row in range(len(mirror)):
         for col in range(len(mirror[0])):
             mirror[row] = mirror[row][:col] + rep_map[mirror[row][col]] + mirror[row][col+1:]
-            #for p_row in range(len(mirror)):
-            #
-            #log(mirror[p_row])
-            
+
             result_v = check_vertical(mirror)  
             result_h = check_horisontal(mirror)
             if original_h in result_h:
@@ -68,37 +44,27 @@ def premutate_mirror(mirror, original_h, original_v):
                 if not result_v:
                     result_v = [0]
                 
-            log(f" {row} {col} {result_v} {result_h}")
-            #log()
-            if result_v[0] == 0 and result_h[0] != 0 and len(result_h) == 1  :
-                print(f"mirror {result_v[0]} {result_h[0]}")
-                result_t = result_h[0]* 100 + result_v[0]  
-                print(result_t)
-                #result += result_t
-                return result_t
-            elif result_h[0] == 0 and result_v[0] != 0 and len(result_v) == 1:
-                print(f"mirror {result_v[0]} {result_h[0]}")
-                result_t = result_h[0]* 100 + result_v[0]
-                print(result_t)
-                #result += result_t
-                return result_t
-                    
+            if (result_v[0] == 0 and result_h[0] != 0 and len(result_h) == 1 or 
+                result_h[0] == 0 and result_v[0] != 0 and len(result_v) == 1) :
+                return result_h[0]*100 + result_v[0] #found mirror              
             mirror[row] = mirror[row][:col] + rep_map[mirror[row][col]] + mirror[row][col+1:]
-    input()
+            
+    input("Error, mirror not found")
     return 0
 
 def main():
     mirrors = parse_input("data.txt")
-    result = 0
-    for i, mirror in enumerate(mirrors):
-
+    part_1_result = 0
+    part_2_result = 0
+    for mirror in mirrors:
         original_v = check_vertical(mirror)[0]
         original_h = check_horisontal(mirror)[0]
-        print(f"\n{i} {original_v} {original_h}")
-        result += premutate_mirror (mirror, original_h, original_v)
+        part_1_result += original_h*100 + original_v
+        part_2_result += premutate_mirror (mirror, original_h, original_v)
 
+    print(f"part 1 {part_1_result}")
+    print(f"part 2 {part_2_result}")
 
-    print(result)
 if __name__ == "__main__":
     start_time = timeit.default_timer()
     main()
