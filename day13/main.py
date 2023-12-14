@@ -68,4 +68,4 @@ def main():
 if __name__ == "__main__":
     start_time = timeit.default_timer()
     main()
-    print(f"Time {timeit.default_timer()-start_time}")
+    print(f"Time {str((timeit.default_timer()-start_time))[:7]} sec")
