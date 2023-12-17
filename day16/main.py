@@ -51,11 +51,8 @@ def bfs(start):
                 visited.append(neighbour)
                 queue.append(neighbour)
     
-    set_visited = []
-    for item in visited:
-        if item[0] not in set_visited:
-            set_visited.append(item[0])
-    return len(set_visited)
+    set_visited = [item[0] for item in visited]
+    return len(set(set_visited))
 
 def main():
     width = parse_input("data.txt")
@@ -64,6 +61,9 @@ def main():
     #    for x in range(width):
     #        line += mirrors[x,y].char_type
     #    print(line)
+    visited = bfs([0,0,0])
+    print (visited)
+    print(f"Time {timeit.default_timer()-start_time}")
     max = 0
     
     for coordinate in range(width):
