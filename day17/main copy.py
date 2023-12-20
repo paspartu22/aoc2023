@@ -1,25 +1,26 @@
 import timeit
 from queue import PriorityQueue
 
-directions = [[1,0],[0,-1], [-1,0], [0,1]]
+directions = {0:[1,0], 1:[0,-1], 2:[-1,0], 3:[0,1]}
 cells =  {}
 class Cell:
     def __init__(self, x, y, loss) -> None:
         self.x = x
         self.y = y 
         self.loss = int(loss)
-        self.neighbours = []
-        self.loss_to_it = [[float('inf') for i in range(3)] for j in range(4)]
+        self.neighbours = {}
     
     def attach_neibours(self):
-        for dir in directions:
-            if (self.x + dir[1][0], self.y + dir[1][1]) in cells:
-                self.neighbours[dir[0]] = cells[self.x + dir[1][0], self.y + dir[1][1]]
+        for dir in directions.items():
+            for dist in range(1,4):
+                if (self.x + dir[1][0]*dist, self.y + dir[1][1]*dist) in cells:
+                    self.neighbours[dir[0]] = cells[self.x + dir[1][0], self.y + dir[1][1]]
 
     def __lt__(self, other):
         return self.loss < other.loss
     
 def dijkstra(cells, start_vertex, size):
+    dir = [0, 0] # 0 - direction, [1] counter
     D = {}
     for dir in range(16):
         D.update({(v[0], v[1], dir//4, dir%4):float('inf') for v in cells})
@@ -33,6 +34,7 @@ def dijkstra(cells, start_vertex, size):
     visited = []
 
     while not pq.empty():
+        
         (dist, current_vertex, dir, dir_counter) = pq.get()
         visited.append((current_vertex, dir, dir_counter))
         
@@ -52,11 +54,11 @@ def dijkstra(cells, start_vertex, size):
                 if new_cost < old_cost:
                     #if (cell.x, cell.y) == (2,1):
                         #pass
-                    values = [D[cell.x, cell.y, new_dir, i] for i in range(new_dir_counter)]
+                    
+                    values = [D[cell.x, cell.y, new_dir, i] for i in range(4)]
                     if not values or max(values) >= new_cost:
                         #print(max(values))
                         pq.put((new_cost, cell, new_dir, new_dir_counter))
-                    #pq.put((new_cost, cell, new_dir, new_dir_counter))
                     D[cell.x, cell.y, new_dir, new_dir_counter] = new_cost
                     #print(f"{cell.x} {cell.y} | {new_cost} | {new_dir} {new_dir_counter}")
                     #if len(D)%10 == 0:
@@ -65,18 +67,6 @@ def dijkstra(cells, start_vertex, size):
                         return D
     return D
 
-def bfs(cells, start, size): #function for BFS
-  visited = (start)
-  queue = (start)
-
-  while queue:          # Creating loop to visit each node
-    m = queue.pop(0) 
-    print (m, end = " ") 
-
-    for neighbour in graph[m]:
-      if neighbour not in visited:
-        visited.append(neighbour)
-        queue.append(neighbour)    
  
 def main():
     size = parse_input("test.txt")
@@ -110,8 +100,9 @@ def draw_dijkstra(D, size):
         print (line)  
         
         print ()
-    for line in output.items():
-        print(f"{(cells[line[0]].loss)} {line[0]} \t {line[1]}")
+    
+    #for line in output.items():
+    #    print(f"{(cells[line[0]].loss)} {line[0]} \t {line[1]}")
     print("+++")
     print(min(output[size-1, size-1]))
             
