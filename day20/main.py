@@ -40,22 +40,22 @@ class Module:
             return 0            
         elif self.name == 'broadcaster':
             for target in self.targets:
-                transmitions.append([self.name[:3], signal, target.name])
+                #transmitions.append([self.name[:3], signal, target.name])
                 yield (target.name, signal, self.name)
         elif self.type == '%' and signal == 0:
             self.state = 1^self.state
             for target in self.targets:
-                transmitions.append([self.name[:3], self.state, target.name])
+                #transmitions.append([self.name[:3], self.state, target.name])
                 yield (target.name, self.state, self.name)
         elif self.type == '&':
             self.inputs[sender] = signal
             if set(self.inputs.values()) == {1}:
                 for target in self.targets:
-                    transmitions.append([self.name[:3], 0, target.name])
+                    #transmitions.append([self.name[:3], 0, target.name])
                     yield(target.name, 0, self.name)
             else:
                 for target in self.targets:
-                    transmitions.append([self.name[:3], 1, target.name])
+                    #transmitions.append([self.name[:3], 1, target.name])
                     yield (target.name, 1, self.name)
 
             
@@ -75,19 +75,8 @@ def main():
         print(f"{name} {modules[name]}")
     modules['rx'].connect()
     print()
-    #part_1()
-    while True:
-        for module in modules.values():
-            if not module.module_done:
-                if set(module.inputs.values()) != {0}:
-                    if module.name == 'brodacaster':
-                        for target in module.targets.values():
-                            target.inputs[module.name] = 1
-                    if module                            
-                print(module.name)
-                for target in module.targets.values():
-                    target
-                    
+    part_1()
+              
 
 def parse_input(file):
     with open(file, "r") as file:
@@ -100,14 +89,24 @@ def parse_input(file):
         return modules
     
 def part_1():
-    for i in range(1000):    
+    results = {'kr':[], 'kf':[], 'qk':[], 'zs':[]}
+    for i in range(1_000_00):    
+        #if i%1000 == 0:
+            #print(i%1000*1000, end='\r')
         transmitions.append(["but", 0, "bro"])
         queue = [['broadcaster', 0, 'button']]
         while queue:
-            now = queue.pop(0)              
-            result = modules[now[0]].send(now[1], now[2])
+            now = queue.pop(0)     
+            result = list(modules[now[0]].send(now[1], now[2]))
+            if now[0] == 'gf' and now[1] == 1:
+                #print()
+                print(f"{i} {modules[now[0]].inputs}")
+                #print()
+                results[now[2]].append(i)
             queue.extend(result)
-    
+    for item in results.items():
+        print(item)
+    '''
     count_0 = 0
     count_1 = 0
     for transmition in transmitions:
@@ -120,6 +119,7 @@ def part_1():
     print(count_0)
     print(count_1)
     print(count_0*count_1)
+    '''
     
 if __name__ == "__main__":
     start_time = timeit.default_timer()
