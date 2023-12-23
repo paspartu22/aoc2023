@@ -3,7 +3,6 @@ import timeit
 cells = {}
 directions = [[1, 0], [0, -1], [-1, 0], [0, 1]]
 
-
 def parse_input(file):
     with open(file, "r") as file:
         start = []
@@ -22,10 +21,9 @@ def bfs(start, max_dist): #function for BFS
     while queue:          # Creating loop to visit each node
         m = queue.pop(0) 
         i+=1
-        if i % 1000 == 0:
-            print (i%1000*1000, end = "\r") 
-        print (m, end = "\r") 
-
+        if i % 10 == 0:
+            print (i%10*10, end = "\r") 
+        
         for dir in directions:
             neighbour = (m[0][0]+dir[0], m[0][1]+dir[1]) 
             mod_neibour = (neighbour[0]%131, neighbour[1]%131)
@@ -36,8 +34,8 @@ def bfs(start, max_dist): #function for BFS
         
 def main():
     start = parse_input("data.txt")
-    max_dist = 64+131
-    visited = bfs([65, 65], max_dist)
+    max_dist = 64
+    visited = bfs([130, 0], max_dist)
     print()
     print(len(visited))
     result = []
@@ -45,10 +43,12 @@ def main():
         if (item[0]+item[1]+start[0]+start[1]) % 2 == max_dist % 2:
             result.append(item)
 
-    for y in range(-131, 2*131):
+    for y in range(131):
         line = ""
-        for x in range(-131, 2*131):
-            if (x, y) in result:
+        for x in range(131):
+            if [x, y] == start:
+                line += "S"
+            elif (x, y) in result:
                 line += "0"
             elif (x,y) in visited:
                 line += "o"

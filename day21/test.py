@@ -1,45 +1,29 @@
-x = (202300-1)*2+1
-result = x
+All_odd = 7567
+all_even = 7509
+
+A_1 = 3787
+A_2 = 3749
+B_1 = 3674
+B_2 = 3737
+
+x = 202300
+
+sum = 2*x+1
+
 while x > 0:
-    x -= 2
-    result += 2*x
+    x -= 1
+    sum += 2*2*x+2
+print(sum)
+size = 202300
 
+x = size + 1
+for i in range(1, size+1):
+    x += 2*i
 print(x)
-print(result)
-result -= 0.5
-result *= 7567
-print(result - 1)
 
-
-print((81850175399 * 7567) + (4*5636) + (4*202300*1015) + (4 * (202300-1) * 6686) - 1)
-
-tops = (5636 + 5673 + 5662 + 5625) * 1
-quats = (958 + 959 + 958 + 947) * 202300
-three_quats = (6560 + 6610 + 6573 + 6571) * (202300-1)
-centers = 7567 * 40924885400
-odds = 7509 * (40924885400 + 404599)
-print(f"result {tops+quats+three_quats+centers+odds}")
-print ((202300-1)*2+1)
-print(81850175399 - ((202300-1)*2+1))
-print ((81850175399 - ((202300-1)*2+1))//2)
-#top = 5636
-#right = 5673
-#bot = 5662
-#left = 5625
-
-#1/4 = 1015
-958
-959
-958
-947
-
-#3/4 = 6686
-6560
-6610
-6573
-6571
-
-#all = 7567
-#all odds = 7509
-
-33858
+all = 81850984601
+A_1_count = 40925694601
+B_count = A_1_count - 202300
+A_2_count = all-A_1_count
+print(A_2_count)
+print(A_1*A_1_count + A_2*A_2_count + B_1*B_count + B_2*B_count - 1)

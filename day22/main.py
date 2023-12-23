@@ -87,10 +87,6 @@ class Brick:
             line += f"{cube.x} {cube.y} {cube.z} \n"
         return line[:-1]
 
-
-        
-
-
 def parse_input(file):
     
     with open(file, "r") as file:
@@ -100,50 +96,28 @@ def parse_input(file):
         
 def main():
     not_stable_bricks, max_z = parse_input("data.txt")
-    '''
-    for z, brick in not_stable_bricks.items():
-        print(z)
-        print('x,y,z')
-        print(brick)
-    '''
+
     stable_bricks = {}
 
-    i = 0
-    for z in range(max_z+100):
+    for z in range(max_z+1):
         print(z, end='\r')
         for id, brick in not_stable_bricks.items():
             if id[1] == z and not brick.stable:
-                i += 1
                 brick.move(stable_bricks)
                 stable_bricks[id] = brick
     
     result = [x for x in stable_bricks.values()]
-#    with open('output.txt', "+a") as file:
     for z, brick in stable_bricks.items():
         support = brick.count_supports(stable_bricks.values())
-        
-        #file.write(str(z) + '\n')
-        #file.write('x,y,z\n')
-        #file.write(str(brick) + '\n')
-        #file.write(str(len(support)) + '\n')
-        
         if len(support) == 1 and support[0] in result:
             result.pop(result.index(support[0]))
-    
-    for z,brick in stable_bricks.items():
-        print(str(z))
-        print('x,y,z')
-        print(str(brick))
-        print(f'support {brick.support}')
-        print(f'supported {brick.supported}')
-        print("====")
+
     print(f'part 1 {len(result)}')
     p2_result = int(0)
     
     for i, brick in stable_bricks.items():
         fall = brick.count_fall([])
         p2_result += len(fall)-1
-        print(f'fall {i} {len(fall)-1}') 
     print(f"Result {p2_result}")
         
 if __name__ == "__main__":
